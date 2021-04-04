@@ -23,5 +23,25 @@ start:  ## Запуск проекта
 	@echo -e 'Сборка проекта'
 	docker-compose up backend
 
+migration:  ## Создание новой миграции
+	@[ -z "$(msg)" ] && \
+		echo '${Red}Добавьте msg${Color_Off}' || \
+	  docker-compose run \
+			-v $(DIR)/backend/migrations:/usr/src/app/migrations \
+			-v $(DIR)/backend/alembic.ini:/usr/src/app/alembic.ini \
+		  api sh -c "alembic revision --autogenerate -m '$(msg)'"
+	@sudo chown $$USER:$$USER -R $(DIR)/backend/migrations/versions
+
+migrate:  ## Обновление БД проекта
+	@docker-compose run \
+	  -v $(DIR)/backend/migrations:/usr/src/app/migrations \
+	  -v $(DIR)/backend/alembic.ini:/usr/src/app/alembic.ini \
+	  backend sh -c "alembic `([ ! -z "$(downgrade)" ] && echo "downgrade -$(downgrade)") || \
+	                      ([ ! -z "$(upgrade)" ] && echo "upgrade $(upgrade)") || \
+	                      echo "upgrade head"`"
+
+pgadmin:  # pgadmin
+	@docker-compose up pgadmin
+
 .PHONY: version help build
 .DEFAULT_GOAL := help

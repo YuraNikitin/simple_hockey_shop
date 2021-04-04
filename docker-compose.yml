@@ -1,0 +1,43 @@
+version: "3.5"
+
+services:
+
+  postgres:
+    restart: always
+    image: postgres:11.5-alpine
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_DB: hockey_portal
+    ports:
+      - "25432:5432"
+    container_name: db_hockey_portal
+    volumes:
+      - ./data:/var/lib/postgresql/data
+
+  backend: &backend
+    build: ./backend
+    depends_on:
+      - postgres
+    volumes:
+      - ./data/uploaded:/usr/src/app/uploaded
+      - ./backend/portal:/usr/src/app/portal
+      - ./backend/migrations:/usr/src/app/migrations
+      - ./backend/project.ini:/usr/src/app/project.ini
+    command: 'gunicorn -b 0.0.0.0:5000 --reload --paster project.ini'
+    ports:
+      - "5001:5000"
+    stdin_open: true
+    tty: true
+
+  pgadmin:
+    image: dpage/pgadmin4:4
+    depends_on:
+      - postgres
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@portal.ru
+      PGADMIN_DEFAULT_PASSWORD: '123456'
+    ports:
+      - "5900:80"
+    volumes:
+      - ./pgadmin.json:/pgadmin4/servers.json
+
