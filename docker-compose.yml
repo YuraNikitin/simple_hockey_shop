@@ -18,12 +18,14 @@ services:
     build: ./backend
     depends_on:
       - postgres
+    env_file:
+      - .env
     volumes:
       - ./data/uploaded:/usr/src/app/uploaded
       - ./backend/portal:/usr/src/app/portal
       - ./backend/migrations:/usr/src/app/migrations
       - ./backend/project.ini:/usr/src/app/project.ini
-    command: 'gunicorn -b 0.0.0.0:5000 --reload --paster project.ini'
+    command: 'gunicorn -b 0.0.0.0:5000 --reload --paster project.ini --log-level=info --timeout 500'
     ports:
       - "5000:5000"
     stdin_open: true
