@@ -21,7 +21,7 @@ build:  ## Сборка проекта
 
 start:  ## Запуск проекта
 	@echo -e 'Сборка проекта'
-	docker-compose up backend
+	docker-compose up backend frontend
 
 migration:  ## Создание новой миграции
 	@[ -z "$(msg)" ] && \
