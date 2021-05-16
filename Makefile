@@ -29,7 +29,7 @@ migration:  ## Создание новой миграции
 	  docker-compose run \
 			-v $(DIR)/backend/migrations:/usr/src/app/migrations \
 			-v $(DIR)/backend/alembic.ini:/usr/src/app/alembic.ini \
-		  api sh -c "alembic revision --autogenerate -m '$(msg)'"
+		  backend sh -c "alembic revision --autogenerate -m '$(msg)'"
 	@sudo chown $$USER:$$USER -R $(DIR)/backend/migrations/versions
 
 migrate:  ## Обновление БД проекта

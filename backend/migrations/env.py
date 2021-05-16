@@ -4,7 +4,7 @@ from logging.config import fileConfig
 from alembic import context
 from sqlalchemy import create_engine, engine_from_config, pool
 
-from sendy.entities import Model
+from portal.models import Model
 
 
 # this is the Alembic Config object, which provides
@@ -39,7 +39,7 @@ def run_migrations_offline():
     script output.
 
     """
-    url = os.environ.get('SENDY_SQLALCHEMY_DSN') or config.get_main_option("sqlalchemy.url")
+    url = os.environ.get('SQLALCHEMY_DSN') or config.get_main_option("sqlalchemy.url")
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -58,8 +58,8 @@ def run_migrations_online():
     and associate a connection with the context.
 
     """
-    if 'SENDY_SQLALCHEMY_DSN' in os.environ:
-        connectable = create_engine(os.environ['SENDY_SQLALCHEMY_DSN'])
+    if 'SQLALCHEMY_DSN' in os.environ:
+        connectable = create_engine(os.environ['SQLALCHEMY_DSN'])
     else:
         connectable = engine_from_config(
             config.get_section(config.config_ini_section),
