@@ -25,9 +25,24 @@ services:
       - ./backend/project.ini:/usr/src/app/project.ini
     command: 'gunicorn -b 0.0.0.0:5000 --reload --paster project.ini'
     ports:
-      - "5001:5000"
+      - "5000:5000"
     stdin_open: true
     tty: true
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend/portal/static:/frontend/portal/static
+      - ./frontend/portal/build:/frontend/portal/build
+      - ./frontend/portal/src:/frontend/portal/src
+      - ./frontend/portal/config:/frontend/portal/config
+    working_dir: /frontend/portal
+    command: npm run dev
+    container_name: portal_frontend
 
   pgadmin:
     image: dpage/pgadmin4:4
